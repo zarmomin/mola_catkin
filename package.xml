@@ -1,0 +1,13 @@
+<package>
+  <name>mola_catkin</name>
+  <version>0.0.1</version>
+  <description>Catkin wrapper for MOLA.</description>
+  <maintainer email="nscheidt@ethz.ch">Nicolas Scheidt</maintainer>
+
+  <license>See package</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <buildtool_depend>catkin_simple</buildtool_depend>
+  <build_depend>mrpt_catkin</build_depend>
+  <run_depend>mrpt_catkin</run_depend>
+</package>
