@@ -1,4 +1,4 @@
-<package>
+<package format="2">
   <name>mola_catkin</name>
   <version>0.0.1</version>
   <description>Catkin wrapper for MOLA.</description>
@@ -8,6 +8,5 @@
 
   <buildtool_depend>catkin</buildtool_depend>
   <buildtool_depend>catkin_simple</buildtool_depend>
-  <build_depend>mrpt_catkin</build_depend>
-  <run_depend>mrpt_catkin</run_depend>
+  <depend>mrpt_catkin</depend>
 </package>

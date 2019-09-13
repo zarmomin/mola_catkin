@@ -3,7 +3,7 @@ project(mola_catkin)
 
 find_package(catkin_simple REQUIRED)
 
-catkin_simple()
+catkin_simple(ALL DEPS REQUIRED)
 
 include(ExternalProject)
 
@@ -19,8 +19,6 @@ ExternalProject_Add(mola_src
   BUILD_COMMAND make
   INSTALL_COMMAND make install
 )
-
-#INSTALL_COMMAND cp -a ../mola_src-build/lib/. ${CATKIN_DEVEL_PREFIX}/lib/ && cp -r ../mola_src/include ${CATKIN_DEVEL_PREFIX}/include/mola
 
 cs_install()
 cs_export(CFG_EXTRAS mola-extras.cmake)

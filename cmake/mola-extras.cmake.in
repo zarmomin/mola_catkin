@@ -1,4 +1,8 @@
 set(@PROJECT_NAME@_INCLUDE_DIRS @CATKIN_DEVEL_PREFIX@/include)
-file(GLOB molaLibraries @CATKIN_DEVEL_PREFIX@/lib/libmola*)
+list(APPEND @PROJECT_NAME@_INCLUDE_DIRS ${mrptModuleIncludes})
+list(REMOVE_DUPLICATES @PROJECT_NAME@_INCLUDE_DIRS)
+
+# manually add the libraries
+file(GLOB molaLibraries "@CATKIN_DEVEL_PREFIX@/lib/libmola-fe-g2o-dataset*" "@CATKIN_DEVEL_PREFIX@/lib/libmola-fe-lidar*" "@CATKIN_DEVEL_PREFIX@/lib/libmola-fe-odometry*" "@CATKIN_DEVEL_PREFIX@/lib/libmola-input-euroc-dataset*" "@CATKIN_DEVEL_PREFIX@/lib/libmola-input-hwdrivers*" "@CATKIN_DEVEL_PREFIX@/lib/libmola-input-kaist-dataset*" "@CATKIN_DEVEL_PREFIX@/lib/libmola-input-kitti-dataset*" "@CATKIN_DEVEL_PREFIX@/lib/libmola-input-rawlog*" "@CATKIN_DEVEL_PREFIX@/lib/libmola-input-ros1*" "@CATKIN_DEVEL_PREFIX@/lib/libmola-kernel*" "@CATKIN_DEVEL_PREFIX@/lib/libmola-launcher*" "@CATKIN_DEVEL_PREFIX@/lib/libmola-lidar-segmentation*" "@CATKIN_DEVEL_PREFIX@/lib/libmola-slam-gtsam*")
 list(APPEND molaLibraries @CATKIN_DEVEL_PREFIX@/lib/libDBoW2${CMAKE_SHARED_LIBRARY_SUFFIX})
 set(@PROJECT_NAME@_LIBRARIES ${molaLibraries})
