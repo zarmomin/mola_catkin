@@ -1,0 +1,12 @@
+diff --git a/modules/mola-fe-lidar/CMakeLists.txt b/modules/mola-fe-lidar/CMakeLists.txt
+index 591ba3a..1bc89e5 100644
+--- a/modules/mola-fe-lidar/CMakeLists.txt
++++ b/modules/mola-fe-lidar/CMakeLists.txt
+@@ -49,6 +49,6 @@ mola_add_executable(
+ 	mp2p_icp
+ 		mrpt::tclap
+ 		mrpt::gui
+-		yaml-cpp
++		${YamlCpp_LIBRARIES}
+ 		${PROJECT_NAME}
+ )

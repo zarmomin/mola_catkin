@@ -1,0 +1,13 @@
+diff --git a/modules/mola-launcher/apps/CMakeLists.txt b/modules/mola-launcher/apps/CMakeLists.txt
+index 3deddee..6fac984 100644
+--- a/modules/mola-launcher/apps/CMakeLists.txt
++++ b/modules/mola-launcher/apps/CMakeLists.txt
+@@ -17,7 +17,7 @@ mola_add_executable(
+ 		mola-launcher
+ 		mrpt::core
+ 		mrpt::tclap
+-		yaml-cpp
++		${YamlCpp_LIBRARIES}
+ )
+
+ mola_add_executable(

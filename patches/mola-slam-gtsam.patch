@@ -1,0 +1,41 @@
+diff --git a/modules/mola-slam-gtsam/CMakeLists.txt b/modules/mola-slam-gtsam/CMakeLists.txt
+index d4e48ea..daea269 100644
+--- a/modules/mola-slam-gtsam/CMakeLists.txt
++++ b/modules/mola-slam-gtsam/CMakeLists.txt
+@@ -32,7 +32,7 @@ mola_add_library(
+ 	SOURCES ${LIB_SRCS} ${LIB_PUBLIC_HDRS}
+ 	PUBLIC_LINK_LIBRARIES
+ 		mola-kernel
+-		gtsam
++		${GTSAM_LIBRARIES}
+ 	PRIVATE_LINK_LIBRARIES
+ 		mrpt::obs
+ 		mrpt::gui
+@@ -43,7 +43,6 @@ if (CMAKE_COMPILER_IS_GNUCXX)
+ 	target_compile_options(${PROJECT_NAME} PRIVATE "-Wno-shadow" "-Wno-unused-parameter")
+ endif()
+
+-
+ target_include_directories(${PROJECT_NAME}
+     PRIVATE
+     "${GTSAM_SOURCE_DIR}/gtsam/"
+diff --git a/modules/mola-slam-gtsam/tests/CMakeLists.txt b/modules/mola-slam-gtsam/tests/CMakeLists.txt
+index 6489609..bcf440b 100644
+--- a/modules/mola-slam-gtsam/tests/CMakeLists.txt
++++ b/modules/mola-slam-gtsam/tests/CMakeLists.txt
+@@ -10,7 +10,7 @@ mola_add_executable(
+     TARGET  test-gtsam-basic-graph
+     SOURCES test-gtsam-basic-graph.cpp
+ 	LINK_LIBRARIES
+-	    gtsam
++	    ${GTSAM_LIBRARIES}
+ )
+ add_test(SLAM_GTSAM_basic_graph ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test-gtsam-basic-graph)
+
+@@ -18,5 +18,6 @@ add_test(SLAM_GTSAM_basic_graph ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test-gtsam-bas
+ target_include_directories(test-gtsam-basic-graph
+     PRIVATE
+     "${GTSAM_SOURCE_DIR}/gtsam/"
++    "${GTSAM_SOURCE_DIR}/gtsam/3rdparty/Eigen"
+     "${GTSAM_BINARY_DIR}/"
+     )

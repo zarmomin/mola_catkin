@@ -1,0 +1,135 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 12fa913..a734edb 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -32,14 +32,19 @@ set(mola-common_DIR ${CMAKE_BINARY_DIR})
+ # find here so external projects can use it
+ find_package(mola-common REQUIRED)
+ 
+-# GTSAM:
+-find_package(GTSAM QUIET)
+-if (NOT GTSAM_FOUND)
+-  message(FATAL_ERROR
+-    " *** GTSAM was not found ***\n"
+-    "Please, install GTSAM or build from sources and set the cmake variable GTSAM_DIR to the build directory.\n"
+-    "In Ubuntu, the easiest solution is to install gtsam from: https://launchpad.net/~joseluisblancoc/+archive/ubuntu/gtsam-develop"
+-  )
++find_package(gtsam_catkin)
++if (gtsam_catkin_FOUND)
++  message("gtsam_catkin ${gtsam_catkin_LIBRARIES}")
++  set(GTSAM_LIBRARIES ${gtsam_catkin_LIBRARIES})
++  set(GTSAM_FOUND ${gtsam_catkin_FOUND})
++  set(GTSAM_INCLUDE_DIRS ${gtsam_catkin_INCLUDE_DIRS})
++  set(GTSAM_SOURCE_DIR "/home/nico/maplab_ws/build/gtsam_catkin/gtsam_src-prefix/src/gtsam_src")
++  set(GTSAM_BINARY_DIR "/home/nico/maplab_ws/build/gtsam_catkin/gtsam_src-prefix/src/gtsam_src-build")
++  message("gtsam: ${GTSAM_LIBRARIES}")
++  message("gtsam source dir: ${GTSAM_SOURCE_DIR}")
++  message("gtsam binary dir: ${GTSAM_BINARY_DIR}")
++else()
++  message(FATAL_ERROR " *** GTSAM was not found ***\n"  )
+ endif()
+ 
+ # Process subdirectories:
+diff --git a/externals/CMakeLists.txt b/externals/CMakeLists.txt
+index 3594914..569c7a4 100644
+--- a/externals/CMakeLists.txt
++++ b/externals/CMakeLists.txt
+@@ -3,4 +3,3 @@ project(all_externals)
+ 
+ add_subdirectory(DBoW2)
+ add_subdirectory(mp2p_icp)
+-add_subdirectory(yaml-cpp)
+diff --git a/externals/DBoW2/CMakeLists.txt b/externals/DBoW2/CMakeLists.txt
+index 84568a2..4dbbcb2 100644
+--- a/externals/DBoW2/CMakeLists.txt
++++ b/externals/DBoW2/CMakeLists.txt
+@@ -9,7 +9,7 @@
+ # =================================================================
+ # License: 3-BSD
+ # =================================================================
+-project(dbow2)
++project(DBoW2)
+ 
+ set(HDRS
+   DBoW2/include/DBoW2/BowVector.h
+@@ -32,25 +32,28 @@ set(SRCS
+   DBoW2/src/ScoringObject.cpp
+ )
+ 
+-find_package(OpenCV REQUIRED)
++message("project binary dir ${PROJECT_BINARY_DIR}")
++message("cmake binary dir ${CMAKE_BINARY_DIR}")
++message("cmake current binary dir ${CMAKE_CURRENT_BINARY_DIR}")
+ 
++set(DBOW_DEPENDENCY_DIR ${CMAKE_CURRENT_BINARY_DIR}/dependencies)
++set(DBOW_DEPENDENCY_INSTALL_DIR ${DBOW_DEPENDENCY_DIR}/install)
+ 
+-mola_add_library(
+-	TARGET ${PROJECT_NAME}
+-	SOURCES ${SRCS}
+-	PUBLIC_LINK_LIBRARIES
+-	  ${OpenCV_LIBS}
+-)
++find_package(OpenCV REQUIRED)
++include_directories(${OpenCV_INCLUDE_DIRS})
+ 
+-target_include_directories(${PROJECT_NAME}
+-  PUBLIC
+-  $<BUILD_INTERFACE:${${PROJECT_NAME}_SOURCE_DIR}/DBoW2/include/>
+-  $<INSTALL_INTERFACE:include>
+-)
++add_library(${PROJECT_NAME} SHARED ${SRCS})
++target_include_directories(${PROJECT_NAME} PUBLIC DBoW2/include)
++target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})
+ 
+-set_target_properties(${PROJECT_NAME}
+-  PROPERTIES
+-  FOLDER "ExternalProjectTargets"
+-)
++configure_file(DBoW2/src/DBoW2.cmake.in
++  "${PROJECT_BINARY_DIR}/DBoW2Config.cmake" @ONLY)
++install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
++
++install(DIRECTORY DBoW2/include/DBoW2 DESTINATION ${CMAKE_INSTALL_PREFIX}/include)
+ 
+-#TODO: export cmake target
++install(FILES "${CMAKE_CURRENT_BINARY_DIR}/DBoW2Config.cmake"
++  DESTINATION ${CMAKE_INSTALL_PREFIX}/include/${PROJECT_NAME})
++install(FILES "${PROJECT_BINARY_DIR}/DBoW2Config.cmake"
++  DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/cmake/DBoW2/)
++install(DIRECTORY ${DBOW_DEPENDENCY_INSTALL_DIR}/ DESTINATION ${CMAKE_INSTALL_PREFIX} OPTIONAL)
+diff --git a/modules/CMakeLists.txt b/modules/CMakeLists.txt
+index 70e0c6d..82dcf2a 100644
+--- a/modules/CMakeLists.txt
++++ b/modules/CMakeLists.txt
+@@ -5,6 +5,9 @@
+ 
+ project(all_modules LANGUAGES CXX)
+ 
++# handle yaml_cpp for all modules
++include(script_yamlcpp.cmake REQUIRED)
++
+ # ----------------------------------------------------
+ # Process dir by dir, solving build dependencies
+ #
+diff --git a/modules/script_yamlcpp.cmake b/modules/script_yamlcpp.cmake
+new file mode 100644
+index 0000000..8f79689
+--- /dev/null
++++ b/modules/script_yamlcpp.cmake
+@@ -0,0 +1,15 @@
++# Check for yaml-cpp libray.
++
++if(NOT DISABLE_YAMLCPP)
++	FIND_PACKAGE(PkgConfig REQUIRED)
++	find_package(yaml_cpp_catkin QUIET)
++	if(${yaml_cpp_catkin_FOUND})
++		message("Found yaml_cpp_catkin, using instead of system library.")
++		set(YamlCpp_LIBRARIES ${yaml_cpp_catkin_LIBRARIES})
++		set(YamlCpp_INCLUDE_DIRS ${yaml_cpp_catkin_INCLUDE_DIRS})
++		include_directories(${YamlCpp_INCLUDE_DIRS})
++	else()
++		message("No yaml_cpp_catkin, using yaml-cpp system library instead.")
++		pkg_check_modules(YamlCpp REQUIRED yaml-cpp>=0.5)
++	endif()
++endif()

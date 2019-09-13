@@ -1,0 +1,21 @@
+diff --git a/modules/mola-lidar-segmentation/CMakeLists.txt b/modules/mola-lidar-segmentation/CMakeLists.txt
+index 6a141b7..4ecdbd1 100644
+--- a/modules/mola-lidar-segmentation/CMakeLists.txt
++++ b/modules/mola-lidar-segmentation/CMakeLists.txt
+@@ -21,7 +21,7 @@ find_package(MRPT 1.9.9 REQUIRED COMPONENTS maps obs gui tclap)
+
+ # Find the ICP C++ library:
+ find_mola_package(mp2p_icp)
+-find_mola_package(mola-kernel)
++find_mola_package(mola-kernel REQUIRED)
+
+ # -----------------------
+ # define lib:
+@@ -47,6 +47,6 @@ mola_add_executable(
+ 		mp2p_icp
+ 		mrpt::tclap
+ 		mrpt::gui
+-		yaml-cpp
++		${YamlCpp_LIBRARIES}
+ 		${PROJECT_NAME}
+ )
